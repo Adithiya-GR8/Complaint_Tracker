@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Dashboard - Complaint Tracker</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><b>Complaint Tracker</b></h1>
+      <div class="user-info">
+        <span id="user-name">Welcome</span>
+        <button id="logout-btn" class="btn">Logout</button>
+      </div>
+    </header>
+
+    <div class="dashboard">
+      <div class="sidebar">
+        <button id="new-complaint-btn" class="btn primary-btn">New Complaint</button>
+        <button id="view-complaints-btn" class="btn">My Complaints</button>
+      </div>
+
+      <div class="main-content">
+        <!-- New Complaint Form -->
+        <div id="new-complaint-section" class="section">
+          <h2>File a New Complaint</h2>
+          <div class="form-group">
+            <label for="comp-title">Complaint Title</label>
+            <input id="comp-title" type="text" placeholder="Enter a title for your complaint" required />
+          </div>
+          <div class="form-group">
+            <label for="comp-description">Description</label>
+            <textarea id="comp-description" placeholder="Describe your complaint in detail" required></textarea>
+          </div>
+          <button id="submit-complaint-btn" class="btn primary-btn">Submit Complaint</button>
+        </div>
+
+        <!-- View Complaints Section -->
+        <div id="view-complaints-section" class="section hidden">
+          <h2>My Active Complaints</h2>
+          <div id="complaint-list" class="complaint-list"></div>
+
+          <h2 class="mt-4">Past Complaints</h2>
+          <div id="past-complaint-list" class="complaint-list"></div>
+        </div>
+
+
+        <!-- Feedback Form -->
+        <div id="feedback-section" class="section hidden">
+          <h2>Submit Feedback</h2>
+          <div class="form-group">
+            <label for="fb-complaintid">Complaint ID</label>
+            <input id="fb-complaintid" type="number" readonly />
+          </div>
+          <div class="form-group">
+            <label for="fb-text">Your Feedback</label>
+            <textarea id="fb-text" placeholder="Please provide your feedback" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="fb-rating">Rating</label>
+            <input id="fb-rating" type="number" min="1" max="5" placeholder="Rate from 1–5" required />
+          </div>
+          <button id="submit-feedback-btn" class="btn primary-btn">Submit Feedback</button>
+          <button id="back-to-complaints-btn" class="btn">Back to Complaints</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/user-dashboard.js"></script>
+</body>
+</html>
