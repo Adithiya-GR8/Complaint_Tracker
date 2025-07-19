@@ -19,7 +19,7 @@ function loadQuery(name) {
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: 'Lazer_XY_12',
     database: 'complaint_system'
 });
 

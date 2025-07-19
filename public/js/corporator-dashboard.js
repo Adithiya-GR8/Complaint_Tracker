@@ -19,6 +19,7 @@ window.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'index.html';
     return;
   }
+
   try {
     const corpData = JSON.parse(loggedInCorporator);
     corporatorId = corpData.corporator_id;
@@ -76,14 +77,12 @@ submitStatusBtn.addEventListener('click', async () => {
 
     if (res.ok) {
       alert('Status updated successfully.');
-      console.log('Status update successful:', data);
       corpActionsSection.classList.add('hidden');
       reviewSection.classList.remove('hidden');
       loadAreaComplaints();
       loadFeedback();
     } else {
       alert(data.error || 'Failed to update status.');
-      console.error('Server error during status update:', data);
     }
   } catch (err) {
     alert('Error while updating status.');
@@ -97,8 +96,6 @@ async function loadAreaComplaints() {
     return;
   }
 
-  console.log('Loading complaints for area ID:', corpAreaId);
-
   try {
     const res = await fetch(`/api/area-complaints/${corpAreaId}?corporator_id=${corporatorId}`);
 
@@ -109,30 +106,38 @@ async function loadAreaComplaints() {
     }
 
     const complaints = await res.json();
-    console.log('Complaints received:', complaints);
 
     if (complaints.length === 0) {
       complaintList.innerHTML = '<p>No complaints found for your area.</p>';
       return;
     }
 
-    // Show only the latest 5 complaints
     const latestComplaints = complaints.slice(0, 5);
 
     complaintList.innerHTML = latestComplaints.map(c => `
-      <div class="complaint-card">  
+      <div class="complaint-card" data-complaint-id="${c.complaint_id}">
         <h4>${c.title}</h4>
         <p>${c.description}</p>
         <p>Status: <strong>${c.status}</strong></p>
-        <button onclick="viewComplaint('${c.complaint_id}')">Take Action</button>
       </div>
     `).join('');
+
+    attachComplaintCardListeners();
   } catch (err) {
     console.error('Error fetching complaints:', err);
     complaintList.innerHTML = '<p>Error loading complaints.</p>';
   }
 }
 
+function attachComplaintCardListeners() {
+  const cards = document.querySelectorAll('.complaint-card');
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      const complaintId = card.getAttribute('data-complaint-id');
+      viewComplaint(complaintId);
+    });
+  });
+}
 
 async function loadFeedback() {
   if (!corporatorId) {
@@ -144,8 +149,6 @@ async function loadFeedback() {
     const res = await fetch(`/api/corporator-feedback/${corporatorId}`);
     const feedbacks = await res.json();
 
-    console.log('Raw feedback data:', feedbacks); // <-- Add this
-
     if (!res.ok) {
       console.error('Error fetching feedback:', feedbacks);
       feedbackSection.innerHTML = '<p>Error loading feedback.</p>';
@@ -154,7 +157,6 @@ async function loadFeedback() {
 
     if (!feedbacks.length) {
       feedbackSection.innerHTML = '<p>No feedback available.</p>';
-      console.warn('No feedbacks returned from API.');
       return;
     }
 
@@ -169,18 +171,6 @@ async function loadFeedback() {
   } catch (err) {
     console.error('Failed to load feedback:', err);
     feedbackSection.innerHTML = '<p>Error loading feedback.</p>';
-  }
-}
-
-
-
-function closeFeedback(id) {
-  const el = document.getElementById(`feedback-${id}`);
-  if (el) {
-    console.log(`Closing feedback ${id}`);
-    el.remove();
-  } else {
-    console.warn(`No feedback element found for id ${id}`);
   }
 }
 
@@ -203,9 +193,12 @@ async function closeFeedback(id) {
   }
 }
 
-
 function viewComplaint(id) {
   complaintIdInput.value = id;
   corpActionsSection.classList.remove('hidden');
   reviewSection.classList.add('hidden');
 }
+
+// Make accessible globally
+window.viewComplaint = viewComplaint;
+window.closeFeedback = closeFeedback;

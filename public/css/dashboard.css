@@ -362,6 +362,27 @@ header {
     color: var(--accent-primary);
 }
 
+.take-action-btn {
+    background: linear-gradient(90deg, #7b2ff2 0%, #f357a8 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(123,47,242,0.08);
+    transition: background 0.2s, transform 0.1s;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    pointer-events: auto;
+    z-index: 2;
+}
+.take-action-btn:hover, .take-action-btn:focus {
+    background: linear-gradient(90deg, #f357a8 0%, #7b2ff2 100%);
+    transform: translateY(-2px) scale(1.04);
+    outline: none;
+}
+
 /* Enhanced Responsive Styles */
 @media (max-width: 1024px) {
     .dashboard-content {
