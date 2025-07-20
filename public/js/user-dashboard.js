@@ -14,6 +14,57 @@ const submitComplaintBtn = document.getElementById('submit-complaint-btn');
 const submitFeedbackBtn = document.getElementById('submit-feedback-btn');
 const backToComplaintsBtn = document.getElementById('back-to-complaints-btn');
 
+// Create user-tabs container and buttons for horizontal tabs
+const dashboardSidebar = document.querySelector('.sidebar');
+const userTabs = document.createElement('div');
+userTabs.className = 'user-tabs';
+const newComplaintTab = document.createElement('button');
+newComplaintTab.id = 'new-complaint-tab';
+newComplaintTab.textContent = 'New Complaint';
+newComplaintTab.className = 'active';
+const myComplaintsTab = document.createElement('button');
+myComplaintsTab.id = 'my-complaints-tab';
+myComplaintsTab.textContent = 'My Complaints';
+userTabs.appendChild(newComplaintTab);
+userTabs.appendChild(myComplaintsTab);
+dashboardSidebar.insertBefore(userTabs, dashboardSidebar.firstChild);
+newComplaintBtn.style.display = 'none';
+viewComplaintsBtn.style.display = 'none';
+
+// Add event listeners for tabs
+newComplaintTab.addEventListener('click', () => showSection('new-complaint'));
+myComplaintsTab.addEventListener('click', () => showSection('my-complaints'));
+
+function showSection(sectionName) {
+    const newComplaintSection = document.getElementById('new-complaint-section');
+    const viewComplaintsSection = document.getElementById('view-complaints-section');
+    const feedbackSection = document.getElementById('feedback-section');
+    const tabs = document.querySelector('.user-tabs');
+
+    newComplaintSection.classList.add('hidden');
+    viewComplaintsSection.classList.add('hidden');
+    feedbackSection.classList.add('hidden');
+
+    if (sectionName === 'new-complaint') {
+        newComplaintSection.classList.remove('hidden');
+        tabs?.setAttribute('data-active', 'new-complaint');
+        newComplaintTab.classList.add('active');
+        myComplaintsTab.classList.remove('active');
+    } else if (sectionName === 'my-complaints') {
+        viewComplaintsSection.classList.remove('hidden');
+        tabs?.setAttribute('data-active', 'my-complaints');
+        myComplaintsTab.classList.add('active');
+        newComplaintTab.classList.remove('active');
+    } else if (sectionName === 'feedback') {
+        feedbackSection.classList.remove('hidden');
+        tabs?.setAttribute('data-active', 'feedback');
+        newComplaintTab.classList.remove('active');
+        myComplaintsTab.classList.remove('active');
+    }
+}
+
+window.showSection = showSection;
+
 let userId = null;
 let userNameValue = null;
 
@@ -33,7 +84,8 @@ function checkAuth() {
     }
 
     userName.textContent = `Welcome, ${userNameValue || 'User'}`;
-    showSection(newComplaintSection);
+    showSection('new-complaint');
+    loadComplaints();
 }
 
 function handleLogout() {
@@ -43,12 +95,29 @@ function handleLogout() {
     window.location.href = 'index.html';
 }
 
-function showSection(section) {
+function showSection(sectionName) {
+    const newComplaintSection = document.getElementById('new-complaint-section');
+    const viewComplaintsSection = document.getElementById('view-complaints-section');
+    const feedbackSection = document.getElementById('feedback-section');
+    const tabs = document.querySelector('.user-tabs');
+
     newComplaintSection.classList.add('hidden');
     viewComplaintsSection.classList.add('hidden');
     feedbackSection.classList.add('hidden');
-    section.classList.remove('hidden');
+
+    if (sectionName === 'new-complaint') {
+        newComplaintSection.classList.remove('hidden');
+        tabs?.setAttribute('data-active', 'new-complaint');
+    } else if (sectionName === 'my-complaints') {
+        viewComplaintsSection.classList.remove('hidden');
+        tabs?.setAttribute('data-active', 'my-complaints');
+    } else if (sectionName === 'feedback') {
+        feedbackSection.classList.remove('hidden');
+        tabs?.setAttribute('data-active', 'feedback');
+    }
 }
+
+window.showSection = showSection;
 
 async function loadComplaints() {
     try {
@@ -90,15 +159,14 @@ function renderComplaints(complaints, container) {
             <p><strong>Your complaint:</strong> ${c.description}</p>
             ${c.status_description ? `<p><strong>Corporator response:</strong> ${c.status_description}</p>` : ''}
             <div class="complaint-date">Created: ${new Date(c.created_at).toLocaleString()}</div>
-            ${isFeedbackAllowed ? '<button class="btn feedback-btn">Give Feedback</button>' : ''}
+            
         </div>
     `;
     }).join('');
 
 
-    container.querySelectorAll('.feedback-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const card = e.target.closest('.complaint-card');
+    container.querySelectorAll('.complaint-card[data-feedback="true"]').forEach(card => {
+        card.addEventListener('click', () => {
             const complaintId = card.dataset.id;
             showFeedbackForm(complaintId);
         });
@@ -108,7 +176,7 @@ function renderComplaints(complaints, container) {
 function showFeedbackForm(complaintId) {
     console.log("Opening feedback form for complaint ID:", complaintId);
     document.getElementById('fb-complaintid').value = complaintId;
-    showSection(feedbackSection);
+    showSection('feedback');
 }
 
 async function submitComplaint() {
@@ -134,7 +202,7 @@ async function submitComplaint() {
             alert('Complaint submitted!');
             document.getElementById('comp-title').value = '';
             document.getElementById('comp-description').value = '';
-            showSection(viewComplaintsSection);
+            showSection('new-complaint');
             loadComplaints();
         } else {
             console.error("Complaint submission failed:", data.error);
@@ -198,9 +266,9 @@ async function submitFeedback() {
 
 document.addEventListener('DOMContentLoaded', checkAuth);
 logoutBtn.addEventListener('click', handleLogout);
-newComplaintBtn?.addEventListener('click', () => showSection(newComplaintSection));
+newComplaintBtn?.addEventListener('click', () => showSection('new-complaint'));
 viewComplaintsBtn?.addEventListener('click', () => {
-    showSection(viewComplaintsSection);
+    showSection('my-complaints');
     loadComplaints();
 });
 submitComplaintBtn?.addEventListener('click', submitComplaint);

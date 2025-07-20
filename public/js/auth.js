@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
         registerTab.classList.remove('active');
         loginForm.classList.remove('hidden');
         registerForm.classList.add('hidden');
+        const tabs = document.querySelector('.tabs');
+        tabs.setAttribute('data-active', 'login');
     });
 
     registerTab.addEventListener('click', () => {
@@ -17,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
         registerForm.classList.remove('hidden');
         loginForm.classList.add('hidden');
         loadAreas();
+        const tabs = document.querySelector('.tabs');
+        tabs.setAttribute('data-active', 'register');
     });
 
     async function loadAreas() {
