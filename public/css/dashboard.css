@@ -633,3 +633,20 @@ header {
         transform: translateY(0);
     }
 }
+
+.feedback-card button {
+    background: var(--accent-primary);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.feedback-card button:hover {
+    background: var(--accent-secondary);
+}
