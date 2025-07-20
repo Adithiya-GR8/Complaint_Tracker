@@ -160,14 +160,14 @@ async function loadFeedback() {
       return;
     }
 
-    feedbackSection.innerHTML = feedbacks.map(f => `
+    feedbackSection.innerHTML = `<div class="feedback-list">` + feedbacks.map(f => `
       <div class="feedback-card" id="feedback-${f.feedback_id}">
         <h4>${f.title}</h4>
         <p><strong>Feedback:</strong> ${f.content}</p>
         <small>${new Date(f.created_at).toLocaleString()}</small>
         <button onclick="closeFeedback(${f.feedback_id})">Close</button>
       </div>
-    `).join('');
+    `).join('') + `</div>`;
   } catch (err) {
     console.error('Failed to load feedback:', err);
     feedbackSection.innerHTML = '<p>Error loading feedback.</p>';

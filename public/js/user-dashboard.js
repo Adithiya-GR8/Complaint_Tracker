@@ -251,7 +251,8 @@ async function submitFeedback() {
             alert('Feedback submitted!');
             document.getElementById('fb-text').value = '';
             document.getElementById('fb-rating').value = '';
-            showSection(viewComplaintsSection);
+            showSection('my-complaints');
+            loadComplaints();
         } else {
             console.warn('Unexpected response type:', contentType);
             alert('Unexpected server response. Please try again.');
