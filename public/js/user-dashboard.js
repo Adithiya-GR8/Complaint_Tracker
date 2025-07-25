@@ -83,6 +83,7 @@ function renderComplaints(complaints, container) {
     container.innerHTML = complaints.map(c => {
     const statusClass = `status-${c.status.toLowerCase().replace(/ /g, '-')}`;
     const isFeedbackAllowed = c.status === 'RESOLVED' || c.status === 'REJECTED';
+    const isPastComplaint = c.status === 'RESOLVED' || c.status === 'REJECTED';
     return `
         <div class="complaint-card" data-id="${c.complaint_id}" data-feedback="${isFeedbackAllowed}">
             <div class="complaint-title">${c.title}</div>
@@ -96,14 +97,52 @@ function renderComplaints(complaints, container) {
     }).join('');
 
 
+<<<<<<< Updated upstream
     container.querySelectorAll('.feedback-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const card = e.target.closest('.complaint-card');
             const complaintId = card.dataset.id;
             showFeedbackForm(complaintId);
         });
+=======
+    container.querySelectorAll('.complaint-card[data-feedback="true"]').forEach(card => {
+    card.addEventListener('click', function(e) {
+        // Prevent click if close button was clicked
+        if (e.target.classList.contains('close-btn')) return;
+        const complaintId = card.dataset.id;
+        showFeedbackForm(complaintId);
+>>>>>>> Stashed changes
     });
+});
+// Add event listeners for close buttons
+container.querySelectorAll('.close-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-close-id');
+        closeComplaint(id);
+    });
+});
 }
+
+async function closeComplaint(id) {
+  const el = document.querySelector(`.complaint-card[data-id=\"${id}\"]`);
+  if (el) el.remove();
+
+  try {
+    const response = await fetch(`/api/complaints/${id}/close`, {
+      method: 'POST'
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to close complaint');
+    }
+
+    console.log(`Complaint ${id} marked as closed.`);
+  } catch (err) {
+    console.error('Error closing complaint:', err);
+  }
+}
+
 
 function showFeedbackForm(complaintId) {
     console.log("Opening feedback form for complaint ID:", complaintId);
@@ -205,4 +244,10 @@ viewComplaintsBtn?.addEventListener('click', () => {
 });
 submitComplaintBtn?.addEventListener('click', submitComplaint);
 submitFeedbackBtn?.addEventListener('click', submitFeedback);
-backToComplaintsBtn?.addEventListener('click', () => showSection(viewComplaintsSection));
+const closeFeedbackBtn = document.getElementById('close-feedback-btn');
+backToComplaintsBtn?.addEventListener('click', () => showSection('my-complaints'));
+closeFeedbackBtn?.addEventListener('click', () => {
+    const complaintId = document.getElementById('fb-complaintid').value;
+    closeComplaint(complaintId);
+    showSection('my-complaints');
+});

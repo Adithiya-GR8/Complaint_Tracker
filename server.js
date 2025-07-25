@@ -19,7 +19,7 @@ function loadQuery(name) {
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: 'Lazer_XY_12',
     database: 'complaint_system'
 });
 
@@ -223,6 +223,20 @@ app.put('/api/complaints/:complaint_id/status', async (req, res) => {
         console.error('Error updating complaint status:', err);
         res.status(500).json({ error: 'Failed to update complaint status' });
     }
+});
+
+app.post('/api/complaints/:complaint_id/close', async (req, res) => {
+  const { complaint_id } = req.params;
+
+  try {
+    const sql = `UPDATE Complaints SET closed = TRUE WHERE complaint_id = ?`;
+    await pool.query(sql, [complaint_id]);
+
+    res.json({ message: 'Complaint marked as closed' });
+  } catch (err) {
+    console.error('Error updating complaint status:', err);
+    res.status(500).json({ error: 'Failed to update complaint status' });
+  }
 });
 
 // Submit feedback for a resolved/rejected complaint

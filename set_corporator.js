@@ -35,7 +35,7 @@ function loadQuery(name) {
         const connection = mysql.createConnection({
             host: 'localhost',
             user: 'root',
-            password: '', // update if needed
+            password: 'Lazer_XY_12', // update if needed
             database: 'complaint_system' // update this to your DB name
         });
 
